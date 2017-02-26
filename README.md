@@ -1,8 +1,6 @@
 #**Traffic Sign Recognition** 
 
-##Writeup Template
-
-###You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
+##Udacity project 2
 
 ---
 
@@ -10,7 +8,7 @@
 
 The goals / steps of this project are the following:
 
-1. Load the data set (see below for links to the project data set)
+1. Load the data set ([link](https://d17h27t6h515a5.cloudfront.net/topher/2017/February/5898cd6f_traffic-signs-data/traffic-signs-data.zip "Link"))
 2. Explore, summarize and visualize the data set
 3. Design, train and test a model architecture
 4. Use the model to make predictions on new images
@@ -62,11 +60,14 @@ The code for this step is contained in the second code cell of the IPython noteb
 I used the pandas library to calculate summary statistics of the traffic
 signs data set:
 
-* The size of training set is 34799
-* The size of test set is 12630
-* The shape of a traffic sign image is (32, 32, 3)
-* The number of unique classes/labels in the data set is 43
 
+- Number of training examples = 34799
+- Number of testing examples = 12630
+- Number of validation  examples = 4410
+- Image data shape = (32, 32, 3)
+- Number of classes train dataset = 43
+- Number of classes test dataset = 43
+- Number of classes validation dataset = 43
 
 
 ####2. Include an exploratory visualization of the dataset and identify where the code is in your code file.
@@ -80,16 +81,20 @@ Here is an exploratory visualization of the data set. It is a bar chart showing 
 ![alt text][image2]
 ###Design and Test a Model Architecture
 
-####1. Describe how, and identify where in your code, you preprocessed the image data. What tecniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc.
+####1. Describe how, and identify where in your code, you preprocessed the image data. What tecniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as normalization, etc.
 
-The code for this step is contained in the fourth code cell of the IPython notebook.
+The code for this step is contained in the the IPython notebook.
 
 I decided not to convert the images to grayscale because we loss some important data and models work worse.
 
-<!---
-Here is an example of a traffic sign image before and after grayscaling.-->
+I normalized the image data. Input data normalization is very important to construct a neural network model. It convert all features (pixels) to the same scale. Normalized data helps Gradient Descent or similar algorithms to work quickly.
 
-I normalized the image data.
+Normalization implemented at min_max_normalization function. I used mix max normalization (min=-0.5, max=0.5). In my case MinMax Scaling works better than other algoritms.
+
+One-Hot Encoding was used to convert label numbers to vectors. One-Hot encoding implemented in one_hot() function. It uses tensorflow fuction tf.one_hot.
+
+
+
 
 ####2. Describe how, and identify where in your code, you set up training, validation and testing data. How much data was in each set? Explain what techniques were used to split the data into these sets. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, identify where in your code, and provide example images of the additional data)
 
@@ -97,115 +102,72 @@ The code for splitting the data into training and validation sets is contained i
 
 To cross validate my model, I randomly shuffle and split the training data into a training set and validation set (80% - 20%). I did this by train_test_split
 
-My final training set had 27839 number of images. My validation set and test set had 6960 and 12630 number of images.
 
-<!---
-The sixth code cell of the IPython notebook contains the code for augmenting the data set. I decided to generate additional data because ... To add more data to the the data set, I used the following techniques because ... 
-
-Here is an example of an original image and an augmented image:
-
-![alt text][image3]
-
-The difference between the original data set and the augmented data set is the following ... 
--->
 
 ####3. Describe, and identify where in your code, what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
 
-The code for my final model is located in the seventh cell of the ipython notebook. 
+The code for my final model is located in the ipython notebook. 
 
-<!---
-My final model consisted of the following layers:
+**Hyperparameters:** 
+I chose:
 
-| Layer         		|     Description	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
-| RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
-|						|												|
-|						|												|
---> 
+**learning rate** of 0.0005
 
-**LeNet**
+**batch size** of 128 
 
-This architecture is based on the LeNet-5 neural network architecture.
-
-___________________________________________________________________________________________________
-Layer (type)                    | Output Shape          Param      Connected to                     
-___________________________________________________________________________________________
-convolution2d_1 (Convolution2D) | (None, 30, 30, 32)    896         convolution2d_input_1[0][0]      
-____________________________________________________________________________________________________
-maxpooling2d_1 (MaxPooling2D)   | (None, 15, 15, 32)    0           convolution2d_1[0][0]            
-____________________________________________________________________________________________________
-dropout_1 (Dropout)             | (None, 15, 15, 32)    0           maxpooling2d_1[0][0]             
-____________________________________________________________________________________________________
-activation_1 (Activation)       | (None, 15, 15, 32)    0           dropout_1[0][0]                  
-____________________________________________________________________________________________________
-flatten_1 (Flatten)             | (None, 7200)          0           activation_1[0][0]               
-____________________________________________________________________________________________________
-dense_1 (Dense)                 | (None, 128)           921728      flatten_1[0][0]                  
-____________________________________________________________________________________________________
-activation_2 (Activation)       | (None, 128)           0           dense_1[0][0]                    
-____________________________________________________________________________________________________
-dense_2 (Dense)                 | (None, 43)            5547        activation_2[0][0]               
-____________________________________________________________________________________________________
-activation_3 (Activation)       | (None, 43)            0           dense_2[0][0]                    
-___________________________________________________________________________________________
+and ran optimization for a total of 28 epochs.
 
 
+**Epochs:** I ran a total of 28 epochs for training the neural network.
 
 
-**CNN**
+**Stopping conditions:** I used accuracy of validation data as a criteria to monitor if model was overfitting. After 28 epoches accuracy of validation changes minimally or drops. 
 
-____________________________________________________________________________________________________
-Layer (type)                     Output Shape          Param #     Connected to                     
-____________________________________________________________________________________________________
-conv1 (Convolution2D)            (None, 32, 32, 32)    2432        convolution2d_input_3[0][0]      
-____________________________________________________________________________________________________
-relu1 (Activation)               (None, 32, 32, 32)    0           conv1[0][0]                      
-____________________________________________________________________________________________________
-maxpool1 (MaxPooling2D)          (None, 31, 31, 32)    0           relu1[0][0]                      
-____________________________________________________________________________________________________
-conv2 (Convolution2D)            (None, 31, 31, 64)    51264       maxpool1[0][0]                   
-____________________________________________________________________________________________________
-relu2 (Activation)               (None, 31, 31, 64)    0           conv2[0][0]                      
-____________________________________________________________________________________________________
-maxpool2 (MaxPooling2D)          (None, 15, 15, 64)    0           relu2[0][0]                      
-____________________________________________________________________________________________________
-conv3 (Convolution2D)            (None, 15, 15, 64)    102464      maxpool2[0][0]                   
-____________________________________________________________________________________________________
-relu3 (Activation)               (None, 15, 15, 64)    0           conv3[0][0]                      
-____________________________________________________________________________________________________
-maxpool3 (MaxPooling2D)          (None, 7, 7, 64)      0           relu3[0][0]                      
-____________________________________________________________________________________________________
-flatten (Flatten)                (None, 3136)          0           maxpool3[0][0]                   
-____________________________________________________________________________________________________
-dropout1 (Dropout)               (None, 3136)          0           flatten[0][0]                    
-____________________________________________________________________________________________________
-hidden1 (Dense)                  (None, 128)           401536      dropout1[0][0]                   
-____________________________________________________________________________________________________
-relu4 (Activation)               (None, 128)           0           hidden1[0][0]                    
-____________________________________________________________________________________________________
-dropout2 (Dropout)               (None, 128)           0           relu4[0][0]                      
-____________________________________________________________________________________________________
-hidden2 (Dense)                  (None, 128)           16512       dropout2[0][0]                   
-____________________________________________________________________________________________________
-relu5 (Activation)               (None, 128)           0           hidden2[0][0]                    
-____________________________________________________________________________________________________
-output (Dense)                   (None, 43)            5547        relu5[0][0]                      
-____________________________________________________________________________________________________
-softmax (Activation)             (None, 43)            0           output[0][0]                     
-____________________________________________________________________________________________________
+
+**Optimization:** I used adamoptimizer with default settings for optimization.
+
+
+###LeNet Model:
+______________________________________
+
+
+**Layer 1**
+Convolutional. Input = 32x32x1. Output = 28x28x6.
+This layer transforms the Tensor 32x32x1 to 28x28x6.
+Use a filter with the shape (5, 5, 1, 6) with Valid padding.
+Use a standard ReLU activation.
+Use max pooling. Input = 10x10x16. Output = 5x5x16.
+
+**Layer 2**
+Convolutional. Output = 10x10x16.
+This layer transforms the Tensor 5x5x16 to 10x10x16.
+Valid padding
+Use a standard ReLU activation.
+Use max pooling. Input = 10x10x16. Output = 5x5x16.
+Use flatten. Input = 5x5x16. Output = 400
+
+**Layer 3**
+Fully Connected. Input = 400. Output = 120.
+Use a standard ReLU activation.    
+
+**Layer 4**
+Fully Connected. Input = 120. Output = 84
+Use a standard ReLU activation.   
+
+**Layer 5**
+Softmax. Fully Connected. Input = 84. Output = 43.
+
+
 
 
 ####4. Describe how, and identify where in your code, you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
+ 
 
-The code for training the model is located in the eigth cell of the ipython notebook. 
-
-The adam optimizer was used with a learning rate of 0.001. Batchsize was 128 with 10 epochs.
+LeNet Model:
+Hyperparameters: I chose a learning rate of 0.0005, batch size of 128 and ran optimization for a total of 28 epochs.
+Epochs : I ran a total of 28 epochs for training the neural network.
+Stopping conditions : I used accuracy of validation data as a criteria to monitor if model was overfitting. After 28 epoches accuracy of validation changes minimally or drops. 
+Optimization : I used adamoptimizer with default settings for optimization.
 
 
 ####5. Describe the approach taken for finding a solution. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
@@ -214,31 +176,19 @@ The code for calculating the accuracy of the model is located in the ninth cell 
 
 My final model results were:
 
-* training set accuracy of 96,03%
-* validation set accuracy of 95,33%
 
-<!---
- * test set accuracy of ?
---> 
+Validation set accuracy of 98,0%
 
-Model loaded from file: my_model_cnn.h5 
-12630/12630 [==============================] - 8s     
-Test accuracy = 0.960332541567696
-4410/4410 [==============================] - 2s     
-Test accuracy = 0.9532879818594104
 
-<!---
-If an iterative approach was chosen:
-* What was the first architecture that was tried and why was it chosen?
-* What were some problems with the initial architecture?
-* How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to over fitting or under fitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
-* Which parameters were tuned? How were they adjusted and why?
-* What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
---> 
 If a well known architecture was chosen:
 * What architecture was chosen? LeNet
 * Why did you believe it would be relevant to the traffic sign application? Accuracy is rather high
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well? The accuracy is more than 90%
+* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well? 
+
+
+I used an architecture model LeNet. I selected this model because it is 
+Well-known model, widely udes for computer vision tasks and rather fast to train on slow computers (because I have unrecoverable tensorflow error when use GPU in some kind of models)
+At the initial stage I didn't make augmented data, but constructed functions for data augmentation and could implement it later. Even without these fucntions I have 96.6% accuracy.
  
 
 ###Test a Model on New Images
@@ -273,32 +223,19 @@ Here are the results of the prediction:
 |:---------------------:|:---------------------------------------------:| 
 | 50 km/h       		| No passing   									| 
 | Road work    			| Road work 									|
-| Road work				| Yield											|
-| Roundabout mandatory	| Roundabout mandatory			 				|
+| Road work				| Wild animals crossing											|
+| Roundabout mandatory	| Keep right			 				|
 | Stop sign				| Stop sign		      							|
 | Stop sign				| Stop sign	   		   							|
 | General caution		| General caution      							|
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+The model was able to correctly guess 4 of the 7 traffic signs, which gives an accuracy of 57%. 
 
 ####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction and identify where in your code softmax probabilities were outputted. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
 The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
 
-<!---
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
 
-| Probability         	|     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
-
-
-For the second image ...
---> 
 ![alt text][image11]
 
 
